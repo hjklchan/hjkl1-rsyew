@@ -1,0 +1,56 @@
+use crate::router::Router;
+use strum::IntoEnumIterator;
+use yew::{function_component, html, use_callback, use_memo, Html};
+use yew_router::{
+    hooks::{use_location, use_navigator},
+    prelude::Link,
+    Routable,
+};
+
+#[function_component(Header)]
+pub fn header() -> Html {
+    let location = use_location().expect("location not available");
+
+    let highlight_color = |path: &str| {
+        if location.path().contains(path) {
+            "text-[#369] font-semibold"
+        } else {
+            "text-gray-800"
+        }
+    };
+
+    html! {
+        <header class={"font-serif z-50 bg-gray-100 sticky top-0 w-full border-b-1 shadow-md bg-gradient-to-b from-gray-50 to-gray-300"}>
+            <div class="flex justify-between px-6 items-center">
+                <div>
+                    <nav class="mx-auto py-1">
+                        <div class="flex items-center">
+                            <Link<Router> to={Router::Home} classes={"select-none font-semibold text-sm"}>
+                                <span class={"px-2 bg-blue-500 rounded-full shadow-inner text-neutral-100 hover:bg-blue-700"}>
+                                    {"hjkl1"}
+                                </span>
+                            </Link<Router>>
+                            <div class="flex space-x-3 ml-3 text-xs items-center">
+                                <Link<Router>
+                                    to={Router::Posts}
+                                    classes={highlight_color(&Router::Posts.to_path())}
+                                >
+                                    {"Posts"}
+                                </Link<Router>>
+                                <Link<Router>
+                                    to={Router::About}
+                                    classes={highlight_color(&Router::About.to_path())}
+                                >
+                                    {"About"}
+                                </Link<Router>>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+                <div class="space-x-1">
+                    {"Login"}
+                </div>
+            </div>
+        </header>
+    }
+}
