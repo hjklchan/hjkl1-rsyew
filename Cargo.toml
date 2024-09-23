@@ -10,4 +10,5 @@ stylist = "0.13.0"
 web-sys = "0.3.70"
 yew = { git = "https://github.com/yewstack/yew/", features = ["csr"] }
 yew-router = { git = "https://github.com/yewstack/yew.git" }
+gloo = "0.11"
 
