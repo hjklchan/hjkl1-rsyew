@@ -1,7 +1,7 @@
-use crate::pages::{about::About, home::Home, not_found::{self, NotFound}, posts::Posts};
+use crate::pages::{about::About, home::Home, not_found::NotFound, posts::Posts};
+use strum_macros::EnumIter;
 use yew::{html, Html};
 use yew_router::Routable;
-use strum_macros::EnumIter;
 
 #[derive(Clone, Routable, PartialEq, EnumIter)]
 pub enum Router {
@@ -10,7 +10,7 @@ pub enum Router {
     #[at("/posts")]
     Posts,
     #[at("/posts/:id")]
-    PostDetail {id: String},
+    PostDetail { id: String },
     #[at("/about")]
     About,
     #[not_found]
@@ -22,7 +22,7 @@ pub fn switch(routes: Router) -> Html {
     match routes {
         Router::Home => html!(<Home />),
         Router::Posts => html!(<Posts />),
-        Router::PostDetail { id } => html!(<>{"Post Detail Page"}</>),
+        Router::PostDetail { id } => html!(<>{"Post Detail Page, #"}{id}</>),
         Router::About => html!(<About />),
         Router::NotFound => html!(<NotFound />),
     }

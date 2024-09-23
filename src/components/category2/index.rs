@@ -1,5 +1,4 @@
-use web_sys::console;
-use yew::{function_component, html, use_state, Callback, Html, MouseEvent, Properties};
+use yew::{function_component, html, use_state, Callback, Html, Properties, UseStateHandle};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Category {
@@ -17,7 +16,7 @@ pub struct Category2Props {
 
 #[function_component(Category2)]
 pub fn category2(props: &Category2Props) -> Html {
-    let current_selected: yew::UseStateHandle<Option<u64>> = use_state(|| None);
+    let current_selected: UseStateHandle<Option<u64>> = use_state(|| None);
 
     let on_category_click = {
         let cloned_on_select = props.on_select.clone();

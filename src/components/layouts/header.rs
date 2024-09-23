@@ -1,11 +1,6 @@
 use crate::router::Router;
-use strum::IntoEnumIterator;
-use yew::{function_component, html, use_callback, use_memo, Html};
-use yew_router::{
-    hooks::{use_location, use_navigator},
-    prelude::Link,
-    Routable,
-};
+use yew::{function_component, html, Html};
+use yew_router::{hooks::use_location, prelude::Link, Routable};
 
 #[function_component(Header)]
 pub fn header() -> Html {
