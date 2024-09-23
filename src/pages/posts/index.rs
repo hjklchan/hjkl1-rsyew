@@ -1,14 +1,32 @@
-use crate::components::category2::Category2;
+use crate::components::category2::{Category, Category2};
 use crate::router::Router;
 use yew::{function_component, html, Html};
 use yew_router::prelude::Link;
 
 #[function_component(Posts)]
 pub fn posts() -> Html {
+    let mock_data: Vec<Category> = vec![
+        Category {
+            id: 1,
+            name: "Backend".to_string(),
+            children: None,
+        },
+        Category {
+            id: 5,
+            name: "Frontend".to_string(),
+            children: None,
+        },
+        Category {
+            id: 8,
+            name: "大数据".to_string(),
+            children: None,
+        },
+    ];
+    
     html! {
         <>
             // Category
-            <Category2 items={None} />
+            <Category2 items={Some(mock_data)} on_select={|id: Option<u64>| gloo::console::log!(id)} />
             // Posts - Header
             <div class="mt-6">
                 <table
