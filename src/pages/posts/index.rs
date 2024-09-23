@@ -1,32 +1,76 @@
 use crate::components::category2::{Category, Category2};
 use crate::router::Router;
-use yew::{function_component, html, Html};
+use gloo::console::log;
+use gloo::net::http::Request;
+use serde::Deserialize;
+use yew::{function_component, html, use_effect_with, use_state, Html, UseStateHandle};
 use yew_router::prelude::Link;
+
+#[derive(Debug, Deserialize)]
+pub struct CategoryItem {
+    pub id: u64,
+    pub name: String,
+    pub description: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct CategoryReply<T> {
+    pub data: Vec<T>,
+    pub message: String,
+}
 
 #[function_component(Posts)]
 pub fn posts() -> Html {
-    let mock_data: Vec<Category> = vec![
-        Category {
-            id: 1,
-            name: "Backend".to_string(),
-            children: None,
-        },
-        Category {
-            id: 5,
-            name: "Frontend".to_string(),
-            children: None,
-        },
-        Category {
-            id: 8,
-            name: "大数据".to_string(),
-            children: None,
-        },
-    ];
-    
+
+    let categories: UseStateHandle<Vec<Category>> = use_state(Vec::new);
+    let current_category: UseStateHandle<Option<u64>> = use_state(|| None);
+
+    {
+        let cloned_categories = categories.clone();
+
+        use_effect_with((), move |_| {
+            log!("fetching categories");
+            
+            let cloned_categories = cloned_categories.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                let fetched_categories: CategoryReply<CategoryItem> =
+                    Request::get("http://127.0.0.1:8000/categories")
+                        .send()
+                        .await
+                        .unwrap()
+                        .json()
+                        .await
+                        .unwrap();
+
+                let inner_categories = fetched_categories
+                    .data
+                    .iter()
+                    .map(|item| Category {
+                        id: item.id,
+                        name: item.name.clone(),
+                        children: None,
+                    })
+                    .collect::<Vec<Category>>();
+
+                cloned_categories.set(inner_categories);
+            });
+
+            || {}
+        });
+    }
+
+    use_effect_with(*current_category, move |id| {
+        log!(format!("{:#?}", id));
+        // TODO: Start to fetch the posts with category_id
+    });
+
     html! {
         <>
             // Category
-            <Category2 items={Some(mock_data)} on_select={|id: Option<u64>| gloo::console::log!(id)} />
+            <Category2
+                items={(*categories).clone()}
+                on_select={move |id: Option<u64>| current_category.set(id)}
+            />
             // Posts - Header
             <div class="mt-6">
                 <table
@@ -35,7 +79,7 @@ pub fn posts() -> Html {
                     cellPadding={0}
                 >
                     <tbody>
-                        <tr class="border-b border-[#hC2D5E3] bg-[#F2F2F2] border-[#C2D5E3] text-xs">
+                        <tr class="border-b border-[#C2D5E3] bg-[#F2F2F2] border-[#C2D5E3] text-xs">
                             <td
                                 colSpan={2}
                                 class="text-left pl-2 py-3 space-x-3"
@@ -49,13 +93,13 @@ pub fn posts() -> Html {
                                     />
                                     <label>{"New Tab"}</label>
                                 </div>
-                                <div class="inline-block space-x-1">
-                                    <input
-                                        type="checkbox"
-                                        // onChange={onShowTop}
-                                    />
-                                    <label>{"Show Top"}</label>
-                                </div>
+                                // <div class="inline-block space-x-1">
+                                //     <input
+                                //         type="checkbox"
+                                //         // onChange={onShowTop}
+                                //     />
+                                //     <label>{"Show Top"}</label>
+                                // </div>
                                 <button class="hover:cursor-pointer text-[#369]">
                                     {"All"}
                                 </button>

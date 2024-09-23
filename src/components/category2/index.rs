@@ -1,6 +1,6 @@
 use yew::{function_component, html, use_state, Callback, Html, Properties, UseStateHandle};
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Category {
     pub id: u64,
     pub name: String,
