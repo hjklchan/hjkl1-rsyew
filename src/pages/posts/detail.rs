@@ -1,9 +1,8 @@
 use crate::router::Router;
-use gloo::console::log;
 use gloo_net::http::Request;
 use pulldown_cmark::{Options, Parser};
 use serde::Deserialize;
-use stylist::yew::styled_component;
+use web_sys::Node;
 use yew::prelude::*;
 use yew_router::components::Link;
 
@@ -30,7 +29,7 @@ pub struct PostDetailProps {
     pub id: u64,
 }
 
-#[styled_component(PostDetail)]
+#[function_component(PostDetail)]
 pub fn post_detail(props: &PostDetailProps) -> Html {
     let post: UseStateHandle<Post> = use_state(Default::default);
 
@@ -80,10 +79,10 @@ pub fn post_detail(props: &PostDetailProps) -> Html {
                         }
                         </span>
                     </h1>
-                    <div>
+                    <div class={""}>
                         <article class="my-8 break-words">
                             if let Some(body) = &post.body {
-                                {Html::from_html_unchecked(make_html_str(body).into())}
+                                {markdown_to_html(body)}
                             } else {
                                 <em class="">{"No content..."}</em>
                             }
@@ -95,14 +94,30 @@ pub fn post_detail(props: &PostDetailProps) -> Html {
     }
 }
 
-fn make_html_str(input: impl AsRef<str>) -> String {
+fn markdown_to_html(input: impl AsRef<str>) -> Html {
     let mut options = Options::empty();
     options.insert(Options::ENABLE_STRIKETHROUGH);
+    options.insert(Options::ENABLE_FOOTNOTES);
+    options.insert(Options::ENABLE_HEADING_ATTRIBUTES);
+    options.insert(Options::ENABLE_SMART_PUNCTUATION);
+    options.insert(Options::ENABLE_TABLES);
+    options.insert(Options::ENABLE_TASKLISTS);
 
     let parser = Parser::new_ext(input.as_ref(), options);
     let mut html_output = String::new();
 
     pulldown_cmark::html::push_html(&mut html_output, parser);
 
-    html_output
+    let div_wrapper = web_sys::window()
+        .unwrap()
+        .document()
+        .unwrap()
+        .create_element("div")
+        .unwrap();
+
+    div_wrapper.set_inner_html(&html_output);
+
+    let node: Node = div_wrapper.into();
+
+    Html::VRef(node)
 }
