@@ -1,10 +1,10 @@
+use crate::router::Router;
 use gloo::console::log;
 use gloo_net::http::Request;
 use pulldown_cmark::{Options, Parser};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use stylist::yew::styled_component;
 use yew::prelude::*;
-use crate::router::Router;
 use yew_router::components::Link;
 
 #[derive(Debug, Deserialize)]
@@ -33,25 +33,23 @@ pub struct PostDetailProps {
 #[styled_component(PostDetail)]
 pub fn post_detail(props: &PostDetailProps) -> Html {
     let post: UseStateHandle<Post> = use_state(Default::default);
-    
+
     {
         let id = props.id.clone();
         let cloned_post = post.clone();
-        
+
         use_effect_with((), move |_| {
             let cloned_post = cloned_post.clone();
 
             wasm_bindgen_futures::spawn_local(async move {
                 let fetched_post = Request::get(&format!("http://127.0.0.1:9000/posts/{}", id))
-                .send()
-                .await
-                .unwrap()
-                .json()
-                .await
-                .map(|reply: NormalReply<Post>| {
-                    reply.data
-                })
-                .unwrap();
+                    .send()
+                    .await
+                    .unwrap()
+                    .json()
+                    .await
+                    .map(|reply: NormalReply<Post>| reply.data)
+                    .unwrap();
 
                 log!(format!("{:#?}", fetched_post));
                 cloned_post.set(fetched_post);

@@ -1,3 +1,4 @@
+use serde::Serialize;
 use yew::{function_component, html, use_state, Callback, Html, Properties, UseStateHandle};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -7,11 +8,19 @@ pub struct Category {
     pub children: Option<Vec<Category>>,
 }
 
+#[derive(Debug, Serialize)]
+pub struct CreatePayload {
+    pub name: String,
+    pub description: Option<String>,
+}
+
 #[derive(Clone, Properties, PartialEq)]
 pub struct Category2Props {
     pub items: Option<Vec<Category>>,
     #[prop_or_default]
     pub on_select: Callback<Option<u64>>,
+    #[prop_or_default]
+    pub on_create: Callback<CreatePayload>
 }
 
 #[function_component(Category2)]
@@ -30,6 +39,15 @@ pub fn category2(props: &Category2Props) -> Html {
             
             cloned_current_selected.set(category_id);
             cloned_on_select.emit(category_id);
+        })
+    };
+
+    let on_create_click = {
+        let _cloned_on_create = props.on_create.clone();
+        
+        Callback::from(move |_| {
+            // TODO Popup the creation form
+            // cloned_on_create.emit()
         })
     };
 
@@ -103,6 +121,14 @@ pub fn category2(props: &Category2Props) -> Html {
                             .collect::<Html>()
                     }
                 }
+                <li class="float-left pr-2">
+                    <button
+                        onclick={on_create_click}
+                        class="p-1 border border-[#CDCDCD] text-[#333] hover:border-[#369] hover:text-[#369] hover:bg-[#E5EDF2]"
+                    >
+                        {"＋Create"}
+                    </button>
+                </li>
             </ul>
         </>
     }

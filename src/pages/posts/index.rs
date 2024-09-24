@@ -129,7 +129,7 @@ pub fn posts() -> Html {
                         };
 
                         cloned_pagination.set(new_pagination);
-                        
+
                         reply.data.items
                     })
                     .map_err(|err| {
