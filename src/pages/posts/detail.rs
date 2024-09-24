@@ -51,7 +51,6 @@ pub fn post_detail(props: &PostDetailProps) -> Html {
                     .map(|reply: NormalReply<Post>| reply.data)
                     .unwrap();
 
-                log!(format!("{:#?}", fetched_post));
                 cloned_post.set(fetched_post);
             });
         });
