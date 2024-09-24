@@ -2,7 +2,7 @@ use crate::components::category2::{Category, Category2};
 use crate::components::icons::{Chat1, Lock1, Eye1};
 use crate::router::Router;
 use gloo::console::log;
-use gloo::net::http::Request;
+use gloo_net::http::Request;
 use serde::Deserialize;
 use yew::{function_component, html, use_effect_with, use_state, Html, UseStateHandle};
 use yew_router::prelude::Link;
@@ -59,9 +59,10 @@ pub fn posts() -> Html {
     let categories: UseStateHandle<Vec<Category>> = use_state(Vec::new);
     let posts: UseStateHandle<Vec<Post>> = use_state(Vec::new);
     let pagination: UseStateHandle<Pagination> = use_state(Default::default);
-    
     let current_category: UseStateHandle<Option<u64>> = use_state(|| None);
 
+    // Fetch categories
+    // - onload
     {
         let cloned_categories = categories.clone();
 
@@ -96,6 +97,8 @@ pub fn posts() -> Html {
         });
     }
 
+    // Fetch posts
+    // - onload
     {
         let cloned_posts = posts.clone();
         let cloned_pagination = pagination.clone();
@@ -157,7 +160,7 @@ pub fn posts() -> Html {
                     <tbody>
                         <tr class="border-b border-[#C2D5E3] bg-[#F2F2F2] border-[#C2D5E3] text-xs">
                             <td
-                                colSpan={2}
+                                colspan={2}
                                 class="text-left pl-2 py-3 space-x-3"
                             >
                                 <div class="inline-block space-x-1">
