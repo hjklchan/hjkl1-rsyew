@@ -1,4 +1,4 @@
-use crate::pages::{about::About, home::Home, not_found::NotFound, posts::Posts};
+use crate::pages::{about::About, home::Home, not_found::NotFound, posts::{Posts, PostDetail}};
 use strum_macros::EnumIter;
 use yew::{html, Html};
 use yew_router::Routable;
@@ -22,7 +22,7 @@ pub fn switch(routes: Router) -> Html {
     match routes {
         Router::Home => html!(<Home />),
         Router::Posts => html!(<Posts />),
-        Router::PostDetail { id } => html!(<>{"Post Detail Page, #"}{id}</>),
+        Router::PostDetail { id } => html!(<PostDetail id={id} />),
         Router::About => html!(<About />),
         Router::NotFound => html!(<NotFound />),
     }
