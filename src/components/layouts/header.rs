@@ -1,10 +1,15 @@
 use crate::router::Router;
-use yew::{function_component, html, Html};
-use yew_router::{hooks::use_location, prelude::Link, Routable};
+use yew::{function_component, html, Callback, Html};
+use yew_router::{
+    hooks::{use_location, use_navigator},
+    prelude::Link,
+    Routable,
+};
 
 #[function_component(Header)]
 pub fn header() -> Html {
     let location = use_location().expect("location not available");
+    let navigator = use_navigator().unwrap();
 
     let highlight_color = |path: &str| {
         if location.path().contains(path) {
@@ -12,6 +17,22 @@ pub fn header() -> Html {
         } else {
             "text-gray-800"
         }
+    };
+
+    let on_login_click: Callback<(), ()> = {
+        let cloned_navigator = navigator.clone();
+
+        Callback::from(move |_| {
+            cloned_navigator.push(&Router::Login);
+        })
+    };
+
+    let on_create_account_click: Callback<(), ()> = {
+        let cloned_navigator = navigator.clone();
+
+        Callback::from(move |_| {
+            cloned_navigator.push(&Router::CreateAccount);
+        })
     };
 
     html! {
@@ -43,7 +64,23 @@ pub fn header() -> Html {
                     </nav>
                 </div>
                 <div class="space-x-1">
-                    {"Login"}
+                    <button
+                        class="text-xs"
+                        onclick={
+                            move |_| {
+                                on_login_click.emit(());
+                            }
+                        }
+                    >{"Login"}</button>
+                    {"|"}
+                    <button
+                        onclick={
+                            move |_| {
+                                on_create_account_click.emit(());
+                            }
+                        }
+                        class="text-xs"
+                    >{"Create Account"}</button>
                 </div>
             </div>
         </header>
