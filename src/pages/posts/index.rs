@@ -151,7 +151,7 @@ pub fn posts() -> Html {
                 on_select={move |id: Option<u64>| current_category.set(id)}
             />
             // Posts - Header
-            <div class="mt-6">
+            <div class="mt-4">
                 <table
                     class="w-full table-fixed"
                     cellSpacing={0}

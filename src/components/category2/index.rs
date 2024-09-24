@@ -71,7 +71,7 @@ pub fn category2(props: &Category2Props) -> Html {
 
     html! {
         <>
-            <ul class="flex flex-wrap items-center my-2 text-xs">
+            <ul class="flex flex-wrap items-center my-0 text-xs">
                 if let Some(items) = &props.items {
                     // Default category
                     // - Query all posts
@@ -101,7 +101,7 @@ pub fn category2(props: &Category2Props) -> Html {
                                 };
 
                                 html! {
-                                    <li key={item.id} class="float-left pr-2">
+                                    <li key={item.id} class="float-left pr-2 my-1">
                                         <button
                                             onclick={
                                                 {
