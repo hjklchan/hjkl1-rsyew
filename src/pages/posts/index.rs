@@ -1,4 +1,5 @@
 use crate::components::category2::{Category, Category2};
+use crate::components::icons::{Chat1, Lock1, Eye1};
 use crate::router::Router;
 use gloo::console::log;
 use gloo::net::http::Request;
@@ -14,15 +15,51 @@ pub struct CategoryItem {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct CategoryReply<T> {
+pub struct ListReply<T> {
     pub data: Vec<T>,
     pub message: String,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct PaginationData<T> {
+    pub items: Vec<T>,
+    pub page_size: u64,
+    pub has_prev: bool,
+    pub has_next: bool,
+    pub total: u64,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct PaginationReply<T> {
+    pub message: String,
+    pub data: PaginationData<T>,
+}
+
+#[derive(Debug, Deserialize, Clone, PartialEq)]
+pub struct Post {
+    pub id: u64,
+    pub category_id: u64,
+    pub category_name: String,
+    pub title: String,
+    pub description: Option<String>,
+    pub created_at: Option<chrono::DateTime<chrono::Local>>,
+    pub updated_at: Option<chrono::DateTime<chrono::Local>>,
+}
+
+#[derive(Debug, Default, PartialEq)]
+struct Pagination {
+    pub has_next: bool,
+    pub has_prev: bool,
+}
+
 #[function_component(Posts)]
 pub fn posts() -> Html {
+    let posts_url = "http://127.0.0.1:9000/posts";
 
     let categories: UseStateHandle<Vec<Category>> = use_state(Vec::new);
+    let posts: UseStateHandle<Vec<Post>> = use_state(Vec::new);
+    let pagination: UseStateHandle<Pagination> = use_state(Default::default);
+    
     let current_category: UseStateHandle<Option<u64>> = use_state(|| None);
 
     {
@@ -30,11 +67,11 @@ pub fn posts() -> Html {
 
         use_effect_with((), move |_| {
             log!("fetching categories");
-            
+
             let cloned_categories = cloned_categories.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                let fetched_categories: CategoryReply<CategoryItem> =
-                    Request::get("http://127.0.0.1:8000/categories")
+                let fetched_categories: ListReply<CategoryItem> =
+                    Request::get("http://127.0.0.1:9000/categories")
                         .send()
                         .await
                         .unwrap()
@@ -59,10 +96,49 @@ pub fn posts() -> Html {
         });
     }
 
-    use_effect_with(*current_category, move |id| {
-        log!(format!("{:#?}", id));
-        // TODO: Start to fetch the posts with category_id
-    });
+    {
+        let cloned_posts = posts.clone();
+        let cloned_pagination = pagination.clone();
+
+        use_effect_with(*current_category, move |option_id| {
+            // Cloned state
+            let cloned_posts = cloned_posts.clone();
+            let cloned_pagination = cloned_pagination.clone();
+            
+            let category_query = option_id
+                .map(|id| format!("?category_id={}", id))
+                .unwrap_or_else(String::new);
+
+            let request_url = format!("{}{}", posts_url, category_query);
+
+            wasm_bindgen_futures::spawn_local(async move {
+                let fetched_posts = Request::get(&request_url)
+                    .send()
+                    .await
+                    .unwrap()
+                    .json()
+                    .await
+                    .map(|reply: PaginationReply<Post>| {
+                        // NOTE Pagination
+                        let new_pagination = Pagination {
+                            has_next: reply.data.has_next,
+                            has_prev: reply.data.has_prev,
+                        };
+
+                        cloned_pagination.set(new_pagination);
+                        
+                        reply.data.items
+                    })
+                    .map_err(|err| {
+                        log!(format!("err: {:#?}", err));
+                        err
+                    })
+                    .unwrap();
+
+                cloned_posts.set(fetched_posts);
+            });
+        });
+    }
 
     html! {
         <>
@@ -91,39 +167,35 @@ pub fn posts() -> Html {
                                         // defaultChecked
                                         // onChange={onNewTab}
                                     />
-                                    <label>{"New Tab"}</label>
+                                    <label>{"New Tab"}{"(Ctrl + Click)"}</label>
                                 </div>
-                                // <div class="inline-block space-x-1">
-                                //     <input
-                                //         type="checkbox"
-                                //         // onChange={onShowTop}
-                                //     />
-                                //     <label>{"Show Top"}</label>
-                                // </div>
-                                <button class="hover:cursor-pointer text-[#369]">
+                                <div class="inline-block space-x-1">
+                                    <input
+                                        type="checkbox"
+                                        // onChange={onShowTop}
+                                    />
+                                    <label>{"Show Top"}</label>
+                                </div>
+                                <button class="text-[#369]">
                                     {"All"}
                                 </button>
-                                <button class="hover:cursor-pointer text-[#369]">
+                                <button class="text-[#369]">
                                     {"Newest"}
                                 </button>
-                                <button class="hover:cursor-pointer text-[#369]">
+                                <button class="text-[#369]">
                                     {"Popular"}
                                 </button>
                             </td>
                             // TODO Hide by special device
-                            <td class="w-28">{"Author"}</td>
-                            <td class="w-24">
+                            <td class="hidden lg:table-cell w-28">{"Author"}</td>
+                            <td class="hidden lg:table-cell w-24">
                                 <div class="flex space-x-1">
-                                    // TODO
-                                    {"c"}
-                                    // <HiOutlineChatBubbleLeftEllipsis />
+                                    <Eye1 classes="w-3" />
                                     <span>{"/"}</span>
-                                    // TODO
-                                    {"v"}
-                                    // <HiOutlineEye />
+                                    <Chat1 classes="w-3" />
                                 </div>
                             </td>
-                            <td class="w-28">{"Last Updated"}</td>
+                            <td class="hidden lg:table-cell w-28">{"Last Updated"}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -135,39 +207,58 @@ pub fn posts() -> Html {
                 >
                     // Using local css
                     <tbody class={""}>
-                        <tr class="table-row align-middle hover:bg-[#F2F2F2] border-b border-[#C2D5E3]">
-                            <td class="w-6 py-1">
-                                // TODO
-                                {"???"}
-                                // <HiOutlineChatBubbleBottomCenterText className="w-full block" />
-                            </td>
-                            <td>
-                                // Link component
-                                <span class="hover:cursor-pointer text-[#369] pl-1 pr-2">
-                                    {"[Laravel]"}
-                                </span>
-                                <Link<Router>
-                                    to={Router::PostDetail { id: "1".to_string() }}
-                                    classes="text-[#333] hover:cursor-pointer hover:border-b border-[#333]"
-                                    // TODO
-                                    // {...newTabProps}
-                                >
-                                    {"最新DNF万能输入法注入器开源了（带易语言源码,带外挂源码）解决部分内存错误"}
-                                </Link<Router>>
-                            </td>
-                            <td class="w-28">
-                                <cite>
-                                    <button
-                                        class="hover:cursor-pointer text-[#369]"
-                                        title="(TODO)"
-                                    >
-                                        {"(TODO)"}
-                                    </button>
-                                </cite>
-                            </td>
-                            <td class="w-24">{"1.2k / 5k"}</td>
-                            <td class="w-28">{"N/A"}</td>
-                        </tr>
+                        {
+                            posts.iter().map(|post| {
+                                let updated_at_str: Option<String> = post
+                                .updated_at
+                                .map(|updated_at| updated_at.format("%Y/%m/%d").to_string());
+
+                                html! {
+                                    <tr class="table-row align-middle hover:bg-[#F2F2F2] border-b border-[#C2D5E3]">
+                                        <td class="w-5 px-1 py-1">
+                                            // TODO
+                                            // Chatting
+                                            <Chat1 classes="text-orange-700 w-4" />
+                                            // Locked
+                                            // <Lock1 classes="text-red-500 w-4" />
+                                        </td>
+                                        <td class="py-1">
+                                            // Link component
+                                            <span class="hover:cursor-pointer text-[#369] pl-1 pr-2">
+                                                {format!("[{}]", post.category_name)}
+                                            </span>
+                                            <Link<Router>
+                                                to={Router::PostDetail { id: post.id }}
+                                                classes="text-[#333] hover:cursor-pointer hover:border-b border-[#333]"
+                                                // TODO
+                                                // {...newTabProps}
+                                            >
+                                                {&post.title}
+                                            </Link<Router>>
+                                        </td>
+                                        <td class="hidden lg:table-cell w-28">
+                                            <cite>
+                                                <button
+                                                    class="hover:cursor-pointer text-[#369]"
+                                                    title="(TODO)"
+                                                >
+                                                    {"(TODO)"}
+                                                </button>
+                                            </cite>
+                                        </td>
+                                        <td class="hidden lg:table-cell w-24">{"1.2k / 5k"}</td>
+                                        <td class="hidden lg:table-cell w-28">
+                                            if let Some(updated_at) = updated_at_str {
+                                                {updated_at}
+                                            } else {
+                                                {"N/A"}
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }).collect::<Html>()
+                        }
+
                     </tbody>
                 </table>
             </div>
