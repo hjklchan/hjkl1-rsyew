@@ -65,8 +65,21 @@ pub fn post_detail(props: &PostDetailProps) -> Html {
                 </div>
                 <div class="flex-1">
                     <h1 class="text-2xl text-gray-600 border-b-2 overflow-hidden border-gray-600 pb-2">
-                        <Link<Router> to={Router::Posts}>{&post.category_name}</Link<Router>>
-                        {format!("[{}] ", &post.category_name)}{&post.title}
+                        // Category
+                        <Link<Router> to={Router::Posts} classes="text-[#369]">
+                            {format!("[{}] ", &post.category_name)}
+                        </Link<Router>>
+                        // Title
+                        {&post.title}
+                        // Created At
+                        <span class="text-base pl-2">
+                        {
+                            post
+                                .created_at
+                                .map(|updated_at| updated_at.format("%Y/%m/%d").to_string())
+                                .unwrap_or("N/A".to_string())
+                        }
+                        </span>
                     </h1>
                     <div>
                         <article class="my-8 break-words">

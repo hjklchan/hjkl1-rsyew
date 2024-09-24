@@ -1,10 +1,10 @@
 use crate::components::category2::{Category, Category2};
-use crate::components::icons::{Chat1, Lock1, Eye1};
+use crate::components::icons::{Chat1, Eye1, Lock1};
 use crate::router::Router;
 use gloo::console::log;
 use gloo_net::http::Request;
 use serde::Deserialize;
-use yew::{function_component, html, use_effect_with, use_state, Html, UseStateHandle};
+use yew::{function_component, html, use_effect_with, use_state, Callback, Html, UseStateHandle};
 use yew_router::prelude::Link;
 
 #[derive(Debug, Deserialize)]
@@ -60,6 +60,8 @@ pub fn posts() -> Html {
     let posts: UseStateHandle<Vec<Post>> = use_state(Vec::new);
     let pagination: UseStateHandle<Pagination> = use_state(Default::default);
     let current_category: UseStateHandle<Option<u64>> = use_state(|| None);
+    let post_form_visible: UseStateHandle<bool> = use_state(|| false);
+    let category_form_visible: UseStateHandle<bool> = use_state(|| false);
 
     // Fetch categories
     // - onload
@@ -107,7 +109,7 @@ pub fn posts() -> Html {
             // Cloned state
             let cloned_posts = cloned_posts.clone();
             let cloned_pagination = cloned_pagination.clone();
-            
+
             let category_query = option_id
                 .map(|id| format!("?category_id={}", id))
                 .unwrap_or_else(String::new);
@@ -143,12 +145,23 @@ pub fn posts() -> Html {
         });
     }
 
+    let on_create_post = {
+        let cloned_post_form_visible = post_form_visible.clone();
+        Callback::from(move |_| cloned_post_form_visible.set(!*cloned_post_form_visible))
+    };
+
+    let on_create_category = {
+        let cloned_category_form_visible = category_form_visible.clone();
+        Callback::from(move |_| cloned_category_form_visible.set(!*cloned_category_form_visible))
+    };
+
     html! {
         <>
             // Category
             <Category2
                 items={(*categories).clone()}
                 on_select={move |id: Option<u64>| current_category.set(id)}
+                on_create={move |_| on_create_category.emit(())}
             />
             // Posts - Header
             <div class="mt-4">
@@ -163,6 +176,14 @@ pub fn posts() -> Html {
                                 colspan={2}
                                 class="text-left pl-2 py-3 space-x-3"
                             >
+                                <div class="inline-block">
+                                    <button
+                                        onclick={on_create_post}
+                                        class="text-[#333] hover:text-[#369]"
+                                    >
+                                        {"Create"}
+                                    </button>
+                                </div>
                                 <div class="inline-block space-x-1">
                                     <input
                                         type="checkbox"
