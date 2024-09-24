@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 strum = "0.26"
 strum_macros = "0.26"
-stylist = "0.13.0"
+stylist = { version = "0.13.0", features = ["yew"] }
 web-sys = "0.3.70"
 yew = { git = "https://github.com/yewstack/yew/", features = ["csr"] }
 yew-router = { git = "https://github.com/yewstack/yew.git" }
@@ -15,3 +15,4 @@ gloo-net = "0.6"
 serde = { version = "1.0.210", features = ["derive"] }
 wasm-bindgen-futures = "0.4.43"
 chrono = { version = "0.4.38", features = ["serde"] }
+pulldown-cmark = "0.12.1"
