@@ -10,7 +10,7 @@ pub enum Router {
     #[at("/posts")]
     Posts,
     #[at("/posts/:id")]
-    PostDetail { id: String },
+    PostDetail { id: u64 },
     #[at("/about")]
     About,
     #[not_found]
