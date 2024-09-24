@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 strum = "0.26"
 strum_macros = "0.26"
-stylist = { version = "0.13.0", features = ["yew"] }
+stylist = { version = "0.13.0", features = ["yew", "yew_use_style"] }
 web-sys = "0.3.70"
 yew = { git = "https://github.com/yewstack/yew/", features = ["csr"] }
 yew-router = { git = "https://github.com/yewstack/yew.git" }
