@@ -151,8 +151,15 @@ pub fn posts() -> Html {
     };
 
     let on_create_category = {
+        let cloned_categories = categories.clone();
         let cloned_category_form_visible = category_form_visible.clone();
-        Callback::from(move |_| cloned_category_form_visible.set(!*cloned_category_form_visible))
+        Callback::from(move |(new_id, name)| {
+            cloned_category_form_visible.set(!*cloned_category_form_visible);
+
+            let mut old_categories = (*cloned_categories).clone();
+            old_categories.push(Category { id: new_id, name, children: None });
+            cloned_categories.set(old_categories);
+        })
     };
 
     html! {
@@ -161,7 +168,9 @@ pub fn posts() -> Html {
             <Category2
                 items={(*categories).clone()}
                 on_select={move |id: Option<u64>| current_category.set(id)}
-                on_create={move |_| on_create_category.emit(())}
+                // @deprecated
+                // on_create={move |_| on_create_category.emit(())}
+                on_created={move |name| on_create_category.emit(name)}
             />
             // Posts - Header
             <div class="mt-4">
