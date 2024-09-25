@@ -86,12 +86,17 @@ pub fn post_detail(props: &PostDetailProps) -> Html {
                         {&post.title}
                         // Created At
                         <span class="text-base pl-2">
-                        {
-                            post
-                                .created_at
-                                .map(|updated_at| updated_at.format("%Y/%m/%d").to_string())
-                                .unwrap_or("N/A".to_string())
-                        }
+                            // {
+                            //     post
+                            //         .created_at
+                            //         .map(|updated_at| updated_at.format("%Y/%m/%d").to_string())
+                            //         .unwrap_or("N/A".to_string())
+                            // }
+                            if let Some(updated_at) = post.created_at {
+                                {updated_at.format("%Y/%m/%d").to_string()}
+                            } else {
+                                {"Unknown"}
+                            }
                         </span>
                     </h1>
                     <div class={""}>
