@@ -45,17 +45,17 @@ pub fn form(props: &FormProps) -> Html {
                 <div class="absolute inset-y-0 right-0 flex items-center">
                     <button
                         onclick={on_close_click}
-                        class="h-full border-0 py-0 pl-2 pr-2 text-gray-500"
+                        class="h-full border-0 py-0 pl-2 pr-2"
                     >
-                        {"×"}
+                        <b class="text-red-900">{"×"}</b>
                     </button>
                 </div>
             </div>
             <button
                 onclick={on_ok_click}
-                class="block text-xs"
+                class="block text-xs text-green-900"
             >
-                {"OK"}
+                {"√"}
             </button>
         </div>
     }
