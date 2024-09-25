@@ -50,6 +50,9 @@ pub fn post_detail(props: &PostDetailProps) -> Html {
                     .map(|reply: NormalReply<Post>| reply.data)
                     .unwrap();
 
+                // Change the document title
+                web_sys::window().unwrap().document().unwrap().set_title(&format!("{} - hjkl1 app", &fetched_post.title));
+
                 cloned_post.set(fetched_post);
             });
         });
@@ -62,7 +65,7 @@ pub fn post_detail(props: &PostDetailProps) -> Html {
                     <div>{"More posts..."}</div>
                 </div>
                 <div class="flex-1">
-                    <h1 class="text-2xl text-gray-600 border-b-2 overflow-hidden border-gray-600 pb-2">
+                    <h1 class="text-xl text-gray-600 border-b-2 overflow-hidden border-gray-600 pb-2">
                         // Category
                         <Link<Router> to={Router::Posts} classes="text-[#369]">
                             {format!("[{}] ", &post.category_name)}
