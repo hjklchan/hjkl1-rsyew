@@ -1,3 +1,4 @@
+use crate::app_ctx::AppContext;
 use crate::router::Router;
 use gloo_net::http::Request;
 use pulldown_cmark::{Options, Parser};
@@ -31,9 +32,13 @@ pub struct PostDetailProps {
 
 #[function_component(PostDetail)]
 pub fn post_detail(props: &PostDetailProps) -> Html {
+    let app_ctx = use_context::<AppContext>().expect("no context found");
+
     let post: UseStateHandle<Post> = use_state(Default::default);
 
     {
+        let clone_app_ctx = app_ctx.clone();
+
         let id = props.id.clone();
         let cloned_post = post.clone();
 
@@ -51,7 +56,14 @@ pub fn post_detail(props: &PostDetailProps) -> Html {
                     .unwrap();
 
                 // Change the document title
-                web_sys::window().unwrap().document().unwrap().set_title(&format!("{} - hjkl1 app", &fetched_post.title));
+                web_sys::window()
+                    .unwrap()
+                    .document()
+                    .unwrap()
+                    .set_title(&format!(
+                        "{} - {}",
+                        &fetched_post.title, &clone_app_ctx.document_title
+                    ));
 
                 cloned_post.set(fetched_post);
             });
