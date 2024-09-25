@@ -1,5 +1,6 @@
 use crate::app_ctx::AppContext;
 use crate::router::Router;
+use gloo::console::log;
 use gloo_net::http::Request;
 use pulldown_cmark::{Options, Parser};
 use serde::Deserialize;
@@ -15,14 +16,14 @@ pub struct NormalReply<T> {
 
 #[derive(Debug, Deserialize, Default)]
 pub struct Post {
-    _id: u64,
-    _category_id: u64,
+    id: u64,
+    category_id: u64,
     category_name: String,
     title: String,
-    _description: Option<String>,
+    description: Option<String>,
     body: Option<String>,
     created_at: Option<chrono::DateTime<chrono::Local>>,
-    _updated_at: Option<chrono::DateTime<chrono::Local>>,
+    updated_at: Option<chrono::DateTime<chrono::Local>>,
 }
 
 #[derive(Properties, PartialEq)]
@@ -99,8 +100,8 @@ pub fn post_detail(props: &PostDetailProps) -> Html {
                             }
                         </span>
                     </h1>
-                    <div class={""}>
-                        <article class="my-8 break-words prose">
+                    <div class={"w-4/5"}>
+                        <article class="my-8 break-words prose max-w-none">
                             if let Some(body) = &post.body {
                                 {markdown_to_html(body)}
                             } else {
