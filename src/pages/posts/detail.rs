@@ -80,7 +80,7 @@ pub fn post_detail(props: &PostDetailProps) -> Html {
                         </span>
                     </h1>
                     <div class={""}>
-                        <article class="my-8 break-words">
+                        <article class="my-8 break-words prose">
                             if let Some(body) = &post.body {
                                 {markdown_to_html(body)}
                             } else {
