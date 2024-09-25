@@ -1,5 +1,5 @@
 use crate::components::category2::{Category, Category2};
-use crate::components::icons::{Chat1, Eye1, Lock1};
+use crate::components::icons::{Chat1, Eye1};
 use crate::router::Router;
 use gloo::console::log;
 use gloo_net::http::Request;

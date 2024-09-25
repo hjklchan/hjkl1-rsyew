@@ -1,5 +1,4 @@
 use super::Form;
-use gloo::console::log;
 use gloo_net::http::Request;
 use serde::Serialize;
 use yew::{function_component, html, use_state, Callback, Html, Properties, UseStateHandle};

@@ -15,14 +15,14 @@ pub struct NormalReply<T> {
 
 #[derive(Debug, Deserialize, Default)]
 pub struct Post {
-    id: u64,
-    category_id: u64,
+    _id: u64,
+    _category_id: u64,
     category_name: String,
     title: String,
-    description: Option<String>,
+    _description: Option<String>,
     body: Option<String>,
     created_at: Option<chrono::DateTime<chrono::Local>>,
-    updated_at: Option<chrono::DateTime<chrono::Local>>,
+    _updated_at: Option<chrono::DateTime<chrono::Local>>,
 }
 
 #[derive(Properties, PartialEq)]
