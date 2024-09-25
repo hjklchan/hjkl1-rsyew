@@ -16,6 +16,7 @@ pub struct CreatePayload {
 
 #[derive(Clone, Properties, PartialEq)]
 pub struct Category2Props {
+    // TODO Using Rc to optimise the item of props?
     pub items: Option<Vec<Category>>,
     #[prop_or_default]
     pub on_select: Callback<Option<u64>>,
