@@ -1,6 +1,6 @@
 use super::Form;
 use gloo_net::http::Request;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use yew::{function_component, html, use_state, Callback, Html, Properties, UseStateHandle};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -21,7 +21,12 @@ pub struct CreatePayload {
     // pub description: Option<String>,
 }
 
-const CATEGORY_API: &'static str = "http://127.0.0.1:9000/categories";
+#[derive(Debug, Deserialize)]
+pub struct CreateReply {
+    pub new_id: u64,
+}
+
+const CATEGORY_API: &'static str = "http://127.0.0.1:8000/categories";
 
 #[derive(Clone, Properties, PartialEq)]
 pub struct Category2Props {
@@ -79,18 +84,17 @@ pub fn category2(props: &Category2Props) -> Html {
             let request_url = format!("{}", CATEGORY_API);
 
             wasm_bindgen_futures::spawn_local(async move {
-                let is_ok = Request::post(&request_url)
+                let response = Request::post(&request_url)
                     .json(&CreatePayload { name: name.clone() })
                     .unwrap()
                     .send()
                     .await
-                    .unwrap()
-                    .ok();
+                    .unwrap();
 
-                if is_ok {
-                    cloned_form_visible.set(false);
-                    cloned_on_created.emit((0, name));
-                }
+                let data = response.json::<CreateReply>().await.unwrap();
+
+                cloned_form_visible.set(false);
+                cloned_on_created.emit((data.new_id, name));
             });
         })
     };

@@ -54,7 +54,7 @@ struct Pagination {
 
 #[function_component(Posts)]
 pub fn posts() -> Html {
-    let posts_url = "http://127.0.0.1:9000/posts";
+    let posts_url = "http://127.0.0.1:8000/posts";
 
     let categories: UseStateHandle<Vec<Category>> = use_state(Vec::new);
     let posts: UseStateHandle<Vec<Post>> = use_state(Vec::new);
@@ -74,7 +74,7 @@ pub fn posts() -> Html {
             let cloned_categories = cloned_categories.clone();
             wasm_bindgen_futures::spawn_local(async move {
                 let fetched_categories: ListReply<CategoryItem> =
-                    Request::get("http://127.0.0.1:9000/categories")
+                    Request::get("http://127.0.0.1:8000/categories")
                         .send()
                         .await
                         .unwrap()
