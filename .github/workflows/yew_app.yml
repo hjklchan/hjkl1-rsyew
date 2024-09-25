@@ -20,3 +20,9 @@ jobs:
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
+    - name: Install Web Assembly target
+      run: rustup target add wasm32-unknown-unknown
+    - name: Install trunk
+      run: cargo install trunk
+    - name: Build Rust-Yew app
+      run: trunk build --release
