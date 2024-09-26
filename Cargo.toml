@@ -14,7 +14,7 @@ stylist = { version = "0.13.0", features = ["yew", "yew_use_style"] }
 web-sys = "0.3.70"
 yew = { git = "https://github.com/yewstack/yew/", features = ["csr"] }
 yew-router = { git = "https://github.com/yewstack/yew.git" }
-gloo = "0.11"
+gloo = { version = "0.11", features = ["timers"] }
 gloo-net = "0.6"
 serde = { version = "1.0.210", features = ["derive"] }
 wasm-bindgen-futures = "0.4.43"
