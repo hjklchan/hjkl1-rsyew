@@ -1,5 +1,4 @@
 // use super::jsondata as post_jsondata;
-use crate::app_ctx::AppContext;
 use crate::components::category2::{
     // jsondata as category_jsondata,
     Category,
@@ -11,7 +10,7 @@ use gloo::console::log;
 use gloo_net::http::Request;
 use serde::Deserialize;
 use yew::{
-    function_component, html, use_context, use_effect_with, use_state, Callback, Html, Suspense,
+    function_component, html, use_effect_with, use_state, Callback, Html, Suspense,
     UseStateHandle,
 };
 use yew_router::hooks::use_navigator;
