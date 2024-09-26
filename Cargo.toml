@@ -3,6 +3,10 @@ name = "hjkl1-yew"
 version = "0.1.0"
 edition = "2021"
 
+[profile.release]
+lto = true
+opt-level = 's'
+
 [dependencies]
 strum = "0.26"
 strum_macros = "0.26"
