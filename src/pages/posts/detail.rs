@@ -1,6 +1,5 @@
 use crate::app_ctx::AppContext;
 use crate::router::Router;
-use gloo::console::log;
 use gloo_net::http::Request;
 use pulldown_cmark::{Options, Parser};
 use serde::Deserialize;

@@ -4,9 +4,11 @@ use crate::components::category2::{Category, Category2};
 use crate::components::icons::{Chat1, Eye1};
 use crate::router::Router;
 use gloo::console::log;
-use gloo_net::http::{Request, Response};
+use gloo_net::http::Request;
 use serde::Deserialize;
-use yew::{function_component, html, use_effect_with, use_state, Callback, Html, UseStateHandle};
+use yew::{
+    function_component, html, use_effect_with, use_state, Callback, Html, Suspense, UseStateHandle,
+};
 use yew_router::prelude::Link;
 
 #[derive(Debug, Deserialize)]
@@ -170,20 +172,22 @@ pub fn posts() -> Html {
 
     html! {
         <>
+            <Suspense fallback={html!(<em>{"Loading..."}</em>)}>
+                <Category2
+                    items={(*categories).clone()}
+                    on_select={move |id: Option<u64>| current_category.set(id)}
+                    // @deprecated
+                    // on_create={move |_| on_create_category.emit(())}
+                    on_created={move |name| on_create_category.emit(name)}
+                />
+            </Suspense>
             // Category
-            <Category2
-                items={(*categories).clone()}
-                on_select={move |id: Option<u64>| current_category.set(id)}
-                // @deprecated
-                // on_create={move |_| on_create_category.emit(())}
-                on_created={move |name| on_create_category.emit(name)}
-            />
             // Posts - Header
             <div class="mt-4">
                 <table
                     class="w-full table-fixed"
-                    cellSpacing={0}
-                    cellPadding={0}
+                    cellspacing={0}
+                    cellpadding={0}
                 >
                     <tbody>
                         <tr class="border-b border-[#C2D5E3] bg-[#F2F2F2] border-[#C2D5E3] text-xs">

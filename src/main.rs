@@ -1,13 +1,13 @@
+use hjkl1_yew::app_ctx::AppContext;
 use hjkl1_yew::components::layouts::{Footer, Header};
 use hjkl1_yew::router::{switch, Router};
-use hjkl1_yew::app_ctx::AppContext;
 use yew::prelude::*;
 use yew_router::{BrowserRouter, Switch};
 
 #[function_component(App)]
 fn app() -> Html {
     let app_ctx: UseStateHandle<AppContext> = use_state(|| AppContext {
-        document_title: "HJKL1 App".to_string()
+        document_title: "Hjkl1 App".to_string(),
     });
 
     // Show app name in document title
@@ -16,7 +16,11 @@ fn app() -> Html {
 
         use_effect_with((), move |_| {
             web_sys::console::log_1(&"app is rendered".into());
-            web_sys::window().unwrap().document().unwrap().set_title(&*cloned_app_ctx.document_title);
+            web_sys::window()
+                .unwrap()
+                .document()
+                .unwrap()
+                .set_title(&*cloned_app_ctx.document_title);
         })
     }
 
