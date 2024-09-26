@@ -1,11 +1,14 @@
-use super::jsondata as post_jsondata;
+// use super::jsondata as post_jsondata;
 use crate::app_ctx::AppContext;
-use crate::components::category2::{jsondata as category_jsondata, Category, Category2};
+use crate::components::category2::{
+    // jsondata as category_jsondata,
+    Category,
+    Category2,
+};
 use crate::components::icons::{Chat1, Eye1};
 use crate::router::Router;
 use gloo::console::log;
-use gloo_net::http::{Request, Response};
-use gloo_net::Error;
+use gloo_net::http::Request;
 use serde::Deserialize;
 use yew::{
     function_component, html, use_context, use_effect_with, use_state, Callback, Html, Suspense,
@@ -62,11 +65,8 @@ struct Pagination {
 #[function_component(Posts)]
 pub fn posts() -> Html {
     let posts_url = "http://127.0.0.1:9000/posts";
-
-    let app_ctx = use_context::<AppContext>().unwrap();
-
+    
     let navigator = use_navigator().unwrap();
-
     let categories: UseStateHandle<Vec<Category>> = use_state(Vec::new);
     let posts: UseStateHandle<Vec<Post>> = use_state(Vec::new);
     let pagination: UseStateHandle<Pagination> = use_state(Default::default);
@@ -152,9 +152,7 @@ pub fn posts() -> Html {
 
                             reply.data.items
                         })
-                        .map_err(|err| {
-                            err
-                        })
+                        .map_err(|err| err)
                         .unwrap();
 
                     cloned_posts.set(fetched_posts);
@@ -301,6 +299,7 @@ pub fn posts() -> Html {
                                 html! {
                                     <tr class="table-row align-middle hover:bg-[#F2F2F2] border-b border-[#C2D5E3]">
                                         <td class="w-5 px-1 py-1">
+                                            // TODO
                                             // Chatting
                                             <Chat1 classes="text-orange-700 w-4" />
                                             // Locked

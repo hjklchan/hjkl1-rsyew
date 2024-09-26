@@ -1,4 +1,4 @@
-use yew::{function_component, html, use_context, Callback, Html};
+use yew::{function_component, html, use_context, Html};
 
 use crate::app_ctx::AppContext;
 

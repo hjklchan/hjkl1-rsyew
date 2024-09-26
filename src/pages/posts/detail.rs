@@ -15,13 +15,17 @@ pub struct NormalReply<T> {
 
 #[derive(Debug, Deserialize, Default)]
 pub struct Post {
+    #[allow(unused)]
     id: u64,
+    #[allow(unused)]
     category_id: u64,
     category_name: String,
     title: String,
+    #[allow(unused)]
     description: Option<String>,
     body: Option<String>,
     created_at: Option<chrono::DateTime<chrono::Local>>,
+    #[allow(unused)]
     updated_at: Option<chrono::DateTime<chrono::Local>>,
 }
 
