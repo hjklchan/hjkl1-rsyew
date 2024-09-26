@@ -11,6 +11,7 @@ use yew::{
     function_component, html, use_context, use_effect_with, use_state, Callback, Html, Suspense,
     UseStateHandle,
 };
+use yew_router::hooks::use_navigator;
 use yew_router::prelude::Link;
 
 #[derive(Debug, Deserialize)]
@@ -64,12 +65,13 @@ pub fn posts() -> Html {
 
     let app_ctx = use_context::<AppContext>().unwrap();
 
+    let navigator = use_navigator().unwrap();
+
     let categories: UseStateHandle<Vec<Category>> = use_state(Vec::new);
     let posts: UseStateHandle<Vec<Post>> = use_state(Vec::new);
     let pagination: UseStateHandle<Pagination> = use_state(Default::default);
     let current_page: UseStateHandle<u32> = use_state(|| 1);
     let current_category: UseStateHandle<Option<u64>> = use_state(|| None);
-    let post_form_visible: UseStateHandle<bool> = use_state(|| false);
     let category_form_visible: UseStateHandle<bool> = use_state(|| false);
 
     // Fetch categories
@@ -162,8 +164,11 @@ pub fn posts() -> Html {
     }
 
     let on_create_post = {
-        let cloned_post_form_visible = post_form_visible.clone();
-        Callback::from(move |_| cloned_post_form_visible.set(!*cloned_post_form_visible))
+        // Redirect to create post page
+
+        Callback::from(move |_| {
+            navigator.push::<Router>(&Router::CreatePost);
+        })
     };
 
     let on_create_category = {
@@ -228,7 +233,7 @@ pub fn posts() -> Html {
                                         onclick={on_create_post}
                                         class="text-[#333] hover:text-[#369]"
                                     >
-                                        {"Create"}
+                                        {"Create Post"}
                                     </button>
                                 </div>
                                 <div class="inline-block space-x-1">

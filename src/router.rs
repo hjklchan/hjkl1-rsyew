@@ -3,7 +3,7 @@ use crate::pages::{
     auth::{CreateAccount, Login},
     home::Home,
     not_found::NotFound,
-    posts::{PostDetail, Posts},
+    posts::{PostDetail, Posts, CreatePost},
 };
 use strum_macros::EnumIter;
 use yew::{html, Html};
@@ -17,6 +17,8 @@ pub enum Router {
     Posts,
     #[at("/posts/:id")]
     PostDetail { id: u64 },
+    #[at("/posts/create")]
+    CreatePost,
     #[at("/about")]
     About,
     #[at("/auth/login")]
@@ -33,6 +35,7 @@ pub fn switch(routes: Router) -> Html {
         Router::Home => html!(<Home />),
         Router::Posts => html!(<Posts />),
         Router::PostDetail { id } => html!(<PostDetail id={id} />),
+        Router::CreatePost => html!(<CreatePost />),
         Router::About => html!(<About />),
         Router::Login => html!(<Login />),
         Router::CreateAccount => html!(<CreateAccount />),
