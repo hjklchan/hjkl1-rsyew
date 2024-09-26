@@ -1,0 +1,1 @@
+Deploy on nginx: docker run --rm -d -p 8888:80 -v YOUR_PROJECT_PATH/dist:/usr/share/nginx/html:ro nginx
