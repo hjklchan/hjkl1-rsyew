@@ -332,15 +332,11 @@ pub fn posts() -> Html {
 
                     </tbody>
                 </table>
-                <div class="space-x-2">
+                <div class="space-x-2 my-2 text-sm">
                     if pagination.has_prev {
-                        <button
-                            onclick={on_prev_page}
-                        >
-                            {"<< Prev"}
-                        </button>
+                        <button onclick={on_prev_page}>{"<< Prev"}</button>
+                        <span>{"|"}</span>
                     }
-                    <span>{"|"}</span>
                     if pagination.has_next {
                         <button
                             onclick={on_next_page}
