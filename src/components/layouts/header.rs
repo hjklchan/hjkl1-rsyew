@@ -42,8 +42,8 @@ pub fn header() -> Html {
                     <nav class="mx-auto py-1">
                         <div class="flex items-center">
                             <Link<Router> to={Router::Home} classes={"select-none font-semibold text-sm"}>
-                                <span class={"px-2 bg-blue-500 rounded-full shadow-inner text-neutral-100 hover:bg-blue-700"}>
-                                    {"hjkl1"}
+                                <span class={"px-2 bg-[#369] rounded-full shadow-inner text-neutral-100 hover:bg-blue-700"}>
+                                    {"hjkl1"}<span class="text-red-500">{".rs"}</span>
                                 </span>
                             </Link<Router>>
                             <div class="flex space-x-3 ml-3 text-xs items-center">
