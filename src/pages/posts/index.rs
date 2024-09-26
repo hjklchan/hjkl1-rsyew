@@ -1,6 +1,6 @@
-// use super::jsondata as post_jsondata;
+use super::jsondata as post_jsondata;
 use crate::components::category2::{
-    // jsondata as category_jsondata,
+    jsondata as category_jsondata,
     Category,
     Category2,
 };
@@ -87,6 +87,10 @@ pub fn posts() -> Html {
                 let categories = Request::get("http://127.0.0.1:9000/categories")
                     .send()
                     .await
+                    .map_err(|err| {
+                        cloned_categories.set(category_jsondata::make_fake_categories());
+                        err
+                    })
                     .unwrap()
                     .json()
                     .await
@@ -137,6 +141,11 @@ pub fn posts() -> Html {
                     let fetched_posts = Request::get(&request_url)
                         .send()
                         .await
+                        .map_err(|err| {
+                            // 更新假数据到 posts 状态中
+                            cloned_posts.set(post_jsondata::make_fake_posts());
+                            err
+                        })
                         .unwrap()
                         .json()
                         .await
