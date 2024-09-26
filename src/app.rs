@@ -26,7 +26,7 @@ pub fn app() -> Html {
 
         use_effect_with((), move |_| {
             wasm_bindgen_futures::spawn_local(async move {
-                let response = Request::get("http://127.0.0.1:8000/health").send().await;
+                let response = Request::get("http://127.0.0.1:9000/health").send().await;
                 let mut tmp_app_ctx = (*cloned_app_ctx).clone();
 
                 match response {

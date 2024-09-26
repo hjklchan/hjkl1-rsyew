@@ -46,7 +46,7 @@ pub fn post_detail(props: &PostDetailProps) -> Html {
             let cloned_post = cloned_post.clone();
 
             wasm_bindgen_futures::spawn_local(async move {
-                let fetched_post = Request::get(&format!("http://127.0.0.1:8000/posts/{}", id))
+                let fetched_post = Request::get(&format!("http://127.0.0.1:9000/posts/{}", id))
                     .send()
                     .await
                     .unwrap()

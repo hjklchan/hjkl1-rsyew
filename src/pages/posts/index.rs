@@ -60,7 +60,7 @@ struct Pagination {
 
 #[function_component(Posts)]
 pub fn posts() -> Html {
-    let posts_url = "http://127.0.0.1:8000/posts";
+    let posts_url = "http://127.0.0.1:9000/posts";
 
     let app_ctx = use_context::<AppContext>().unwrap();
 

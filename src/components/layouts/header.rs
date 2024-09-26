@@ -59,6 +59,19 @@ pub fn header() -> Html {
                                 >
                                     {"About"}
                                 </Link<Router>>
+                                <button
+                                    onclick={
+                                        Callback::from(move |_|
+                                            {
+                                                let repo_url: &'static str = "https://github.com/hjklchan/hjkl1-rsyew";
+                                                web_sys::window().unwrap().open_with_url_and_target(repo_url, "_blank").unwrap();
+                                            }
+                                        )
+                                    }
+                                    class="text-gray-800 text-xs"
+                                >
+                                    {"Github ↗"}
+                                </button>
                             </div>
                         </div>
                     </nav>

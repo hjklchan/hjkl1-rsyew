@@ -26,7 +26,7 @@ pub struct CreateReply {
     pub new_id: u64,
 }
 
-const CATEGORY_API: &'static str = "http://127.0.0.1:8000/categories";
+const CATEGORY_API: &'static str = "http://127.0.0.1:9000/categories";
 
 #[derive(Clone, Properties, PartialEq)]
 pub struct Category2Props {
