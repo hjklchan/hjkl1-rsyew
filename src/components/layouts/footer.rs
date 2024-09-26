@@ -1,12 +1,14 @@
-use yew::{function_component, html, use_context, Html};
+use std::time::SystemTime;
+
+use yew::{function_component, html, use_context, use_effect, use_state, Html};
 
 use crate::app_ctx::AppContext;
 
 #[function_component(Footer)]
 pub fn footer() -> Html {
     let app_ctx = use_context::<AppContext>().unwrap();
-    
-    let datetime = "2024/09/20 10:24 AM";
+
+    let current_date_time = use_state(|| "2024/09/26 11:33 PM");
 
     html!(
         <footer class="fixed inset-x-0 bottom-0 border-t-2 border-slate-100">
@@ -31,9 +33,15 @@ pub fn footer() -> Html {
                     </div>
                 </div>
                 <div class="flex-none w-32 text-xs text-gray-600">
-                    {datetime}
+                    {current_date_time.to_string()}
                 </div>
             </div>
         </footer>
     )
 }
+
+// fn format_current_time() -> String {
+//     let now = SystemTime::now();
+//     let datetime: chrono::DateTime<chrono::Utc> = now.into();
+//     datetime.format("%Y-%m-%d %H:%M:%S").to_string()
+// }
