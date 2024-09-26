@@ -1,13 +1,13 @@
-use std::vec;
-
-use crate::components::category2::{Category, Category2};
+use crate::app_ctx::AppContext;
+use crate::components::category2::{jsondata as category_jsondata, Category, Category2};
+use super::jsondata as post_jsondata;
 use crate::components::icons::{Chat1, Eye1};
 use crate::router::Router;
 use gloo::console::log;
 use gloo_net::http::Request;
 use serde::Deserialize;
 use yew::{
-    function_component, html, use_effect_with, use_state, Callback, Html, Suspense, UseStateHandle,
+    function_component, html, use_context, use_effect_with, use_state, Callback, Html, Suspense, UseStateHandle
 };
 use yew_router::prelude::Link;
 
@@ -60,6 +60,8 @@ struct Pagination {
 pub fn posts() -> Html {
     let posts_url = "http://127.0.0.1:8000/posts";
 
+    let app_ctx = use_context::<AppContext>().unwrap();
+    
     let categories: UseStateHandle<Vec<Category>> = use_state(Vec::new);
     let posts: UseStateHandle<Vec<Post>> = use_state(Vec::new);
     let pagination: UseStateHandle<Pagination> = use_state(Default::default);
@@ -76,28 +78,35 @@ pub fn posts() -> Html {
             log!("fetching categories");
 
             let cloned_categories = cloned_categories.clone();
-            wasm_bindgen_futures::spawn_local(async move {
-                let categories = Request::get("http://127.0.0.1:9000/categories")
-                    .send()
-                    .await
-                    .unwrap()
-                    .json()
-                    .await
-                    .map(|reply: ListReply<CategoryItem>| {
-                        reply
-                            .data
-                            .iter()
-                            .map(|item| Category {
-                                id: item.id,
-                                name: item.name.clone(),
-                                children: None,
-                            })
-                            .collect::<Vec<Category>>()
-                    })
-                    .unwrap();
 
+            if app_ctx.server_status.is_some() {
+                wasm_bindgen_futures::spawn_local(async move {
+                    let categories = Request::get("http://127.0.0.1:9000/categories")
+                        .send()
+                        .await
+                        .unwrap()
+                        .json()
+                        .await
+                        .map(|reply: ListReply<CategoryItem>| {
+                            reply
+                                .data
+                                .iter()
+                                .map(|item| Category {
+                                    id: item.id,
+                                    name: item.name.clone(),
+                                    children: None,
+                                })
+                                .collect::<Vec<Category>>()
+                        })
+                        .unwrap();
+    
+                    cloned_categories.set(categories);
+                });
+            } else {
+                // Load fake data
+                let categories = category_jsondata::make_fake_categories();
                 cloned_categories.set(categories);
-            });
+            }
 
             || {}
         });
@@ -120,32 +129,39 @@ pub fn posts() -> Html {
 
             let request_url = format!("{}{}", posts_url, category_query);
 
-            wasm_bindgen_futures::spawn_local(async move {
-                let fetched_posts = Request::get(&request_url)
-                    .send()
-                    .await
-                    .unwrap()
-                    .json()
-                    .await
-                    .map(|reply: PaginationReply<Post>| {
-                        // NOTE Pagination
-                        let new_pagination = Pagination {
-                            has_next: reply.data.has_next,
-                            has_prev: reply.data.has_prev,
-                        };
+            if app_ctx.server_status.is_some() {
+                wasm_bindgen_futures::spawn_local(async move {
+                    let fetched_posts = Request::get(&request_url)
+                        .send()
+                        .await
+                        .unwrap()
+                        .json()
+                        .await
+                        .map(|reply: PaginationReply<Post>| {
+                            // NOTE Pagination
+                            let new_pagination = Pagination {
+                                has_next: reply.data.has_next,
+                                has_prev: reply.data.has_prev,
+                            };
+    
+                            cloned_pagination.set(new_pagination);
+    
+                            reply.data.items
+                        })
+                        .map_err(|err| {
+                            log!(format!("err: {:#?}", err));
+                            err
+                        })
+                        .unwrap();
+    
+                    cloned_posts.set(fetched_posts);
+                });
+            } else {
+                let posts = post_jsondata::make_fake_posts();
+                cloned_posts.set(posts);
+            }
 
-                        cloned_pagination.set(new_pagination);
-
-                        reply.data.items
-                    })
-                    .map_err(|err| {
-                        log!(format!("err: {:#?}", err));
-                        err
-                    })
-                    .unwrap();
-
-                cloned_posts.set(fetched_posts);
-            });
+            || {}
         });
     }
 
