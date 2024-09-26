@@ -301,7 +301,6 @@ pub fn posts() -> Html {
                                 html! {
                                     <tr class="table-row align-middle hover:bg-[#F2F2F2] border-b border-[#C2D5E3]">
                                         <td class="w-5 px-1 py-1">
-                                            // TODO
                                             // Chatting
                                             <Chat1 classes="text-orange-700 w-4" />
                                             // Locked
