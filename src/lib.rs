@@ -10,6 +10,6 @@ pub mod app_ctx {
         // None         =>  Checking
         // Some(true)   =>  Available
         // Some(false)  =>  Unavailable
-        pub server_status: Option<bool>,
+        pub server_status: Option<bool>, // @deprecated
     }
 }

@@ -15,7 +15,7 @@ pub fn app() -> Html {
         // None         =>  Checking
         // Some(true)   =>  Available
         // Some(false)  =>  Unavailable
-        server_status: None,
+        server_status: None, // @deprecated
     });
 
     // Check server status
