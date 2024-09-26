@@ -1,8 +1,10 @@
+use std::vec;
+
 use crate::components::category2::{Category, Category2};
 use crate::components::icons::{Chat1, Eye1};
 use crate::router::Router;
 use gloo::console::log;
-use gloo_net::http::Request;
+use gloo_net::http::{Request, Response};
 use serde::Deserialize;
 use yew::{function_component, html, use_effect_with, use_state, Callback, Html, UseStateHandle};
 use yew_router::prelude::Link;
@@ -73,26 +75,26 @@ pub fn posts() -> Html {
 
             let cloned_categories = cloned_categories.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                let fetched_categories: ListReply<CategoryItem> =
-                    Request::get("http://127.0.0.1:8000/categories")
-                        .send()
-                        .await
-                        .unwrap()
-                        .json()
-                        .await
-                        .unwrap();
-
-                let inner_categories = fetched_categories
-                    .data
-                    .iter()
-                    .map(|item| Category {
-                        id: item.id,
-                        name: item.name.clone(),
-                        children: None,
+                let categories = Request::get("http://127.0.0.1:9000/categories")
+                    .send()
+                    .await
+                    .unwrap()
+                    .json()
+                    .await
+                    .map(|reply: ListReply<CategoryItem>| {
+                        reply
+                            .data
+                            .iter()
+                            .map(|item| Category {
+                                id: item.id,
+                                name: item.name.clone(),
+                                children: None,
+                            })
+                            .collect::<Vec<Category>>()
                     })
-                    .collect::<Vec<Category>>();
+                    .unwrap();
 
-                cloned_categories.set(inner_categories);
+                cloned_categories.set(categories);
             });
 
             || {}
@@ -157,7 +159,11 @@ pub fn posts() -> Html {
             cloned_category_form_visible.set(!*cloned_category_form_visible);
 
             let mut old_categories = (*cloned_categories).clone();
-            old_categories.push(Category { id: new_id, name, children: None });
+            old_categories.push(Category {
+                id: new_id,
+                name,
+                children: None,
+            });
             cloned_categories.set(old_categories);
         })
     };
