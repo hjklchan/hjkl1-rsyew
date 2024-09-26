@@ -2,6 +2,7 @@ pub mod app;
 pub mod pages;
 pub mod components;
 pub mod router;
+pub mod utils;
 
 pub mod app_ctx {
     #[derive(Debug, Clone, PartialEq)]
