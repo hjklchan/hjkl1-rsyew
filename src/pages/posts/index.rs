@@ -67,6 +67,7 @@ pub fn posts() -> Html {
     let categories: UseStateHandle<Vec<Category>> = use_state(Vec::new);
     let posts: UseStateHandle<Vec<Post>> = use_state(Vec::new);
     let pagination: UseStateHandle<Pagination> = use_state(Default::default);
+    let current_page: UseStateHandle<u32> = use_state(|| 1);
     let current_category: UseStateHandle<Option<u64>> = use_state(|| None);
     let post_form_visible: UseStateHandle<bool> = use_state(|| false);
     let category_form_visible: UseStateHandle<bool> = use_state(|| false);
@@ -116,17 +117,18 @@ pub fn posts() -> Html {
     {
         let cloned_posts = posts.clone();
         let cloned_pagination = pagination.clone();
+        let cloned_current_page = current_page.clone();
 
-        use_effect_with(*current_category, move |option_id| {
+        use_effect_with((*current_category, *cloned_current_page), move |(option_id, page)| {
             // Cloned state
             let cloned_posts = cloned_posts.clone();
             let cloned_pagination = cloned_pagination.clone();
 
             let category_query = option_id
-                .map(|id| format!("?category_id={}", id))
+                .map(|id| format!("&category_id={}", id))
                 .unwrap_or_else(String::new);
 
-            let request_url = format!("{}{}", posts_url, category_query);
+            let request_url = format!("{}?page={}{}", posts_url, page, category_query);
 
             wasm_bindgen_futures::spawn_local(async move {
                 let fetched_posts = Request::get(&request_url)
@@ -177,6 +179,22 @@ pub fn posts() -> Html {
                 children: None,
             });
             cloned_categories.set(old_categories);
+        })
+    };
+
+    let on_next_page = {
+        let cloned_current_page = current_page.clone();
+        
+        Callback::from(move |_| {
+            cloned_current_page.set(*cloned_current_page + 1);
+        })
+    };
+    
+    let on_prev_page = {
+        let cloned_current_page = current_page.clone();
+
+        Callback::from(move |_| {
+            cloned_current_page.set(*cloned_current_page - 1);
         })
     };
 
@@ -314,6 +332,23 @@ pub fn posts() -> Html {
 
                     </tbody>
                 </table>
+                <div class="space-x-2">
+                    if pagination.has_prev {
+                        <button
+                            onclick={on_prev_page}
+                        >
+                            {"<< Prev"}
+                        </button>
+                    }
+                    <span>{"|"}</span>
+                    if pagination.has_next {
+                        <button
+                            onclick={on_next_page}
+                        >
+                            {"Next >>"}
+                        </button>
+                    }
+                </div>
             </div>
         </>
     }
