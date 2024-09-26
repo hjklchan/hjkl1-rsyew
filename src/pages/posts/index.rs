@@ -77,15 +77,12 @@ pub fn posts() -> Html {
     // Fetch categories
     // - onload
     {
-        let cloned_app_ctx = app_ctx.clone();
         let cloned_categories = categories.clone();
 
         use_effect_with((), move |_| {
             log!("fetching categories");
 
             let cloned_categories = cloned_categories.clone();
-
-            log!(format!("{:#?}", cloned_app_ctx));
 
             wasm_bindgen_futures::spawn_local(async move {
                 let categories = Request::get("http://127.0.0.1:9000/categories")
@@ -121,52 +118,58 @@ pub fn posts() -> Html {
         let cloned_pagination = pagination.clone();
         let cloned_current_page = current_page.clone();
 
-        use_effect_with((*current_category, *cloned_current_page), move |(option_id, page)| {
-            // Cloned state
-            let cloned_posts = cloned_posts.clone();
-            let cloned_pagination = cloned_pagination.clone();
+        // FIXME 通过监听当前分类和当前分页获取文章的问题
+        // - 不能同时监听当前分类和当前分页
+        // - 当更换页码后更换分类会出现当前页码数仍然保留
+        use_effect_with(
+            (*current_category, *cloned_current_page),
+            move |(category_id, page)| {
+                // Cloned state
+                let cloned_posts = cloned_posts.clone();
+                let cloned_pagination = cloned_pagination.clone();
 
-            let category_query = option_id
-                .map(|id| format!("&category_id={}", id))
-                .unwrap_or_else(String::new);
+                let category_query = category_id
+                    .map(|id| format!("&category_id={}", id))
+                    .unwrap_or_else(String::new);
 
-            let request_url = format!("{}?page={}{}", posts_url, page, category_query);
+                let request_url = format!("{}?page={}{}", posts_url, page, category_query);
 
-            wasm_bindgen_futures::spawn_local(async move {
-                let fetched_posts = Request::get(&request_url)
-                    .send()
-                    .await
-                    .unwrap()
-                    .json()
-                    .await
-                    .map(|reply: PaginationReply<Post>| {
-                        // NOTE Pagination
-                        let new_pagination = Pagination {
-                            has_next: reply.data.has_next,
-                            has_prev: reply.data.has_prev,
-                        };
+                wasm_bindgen_futures::spawn_local(async move {
+                    let fetched_posts = Request::get(&request_url)
+                        .send()
+                        .await
+                        .unwrap()
+                        .json()
+                        .await
+                        .map(|reply: PaginationReply<Post>| {
+                            // NOTE Pagination
+                            let new_pagination = Pagination {
+                                has_next: reply.data.has_next,
+                                has_prev: reply.data.has_prev,
+                            };
 
-                        cloned_pagination.set(new_pagination);
+                            cloned_pagination.set(new_pagination);
 
-                        reply.data.items
-                    })
-                    .map_err(|err| {
-                        log!(format!("err: {:#?}", err));
-                        err
-                    })
-                    .unwrap();
+                            reply.data.items
+                        })
+                        .map_err(|err| {
+                            err
+                        })
+                        .unwrap();
 
-                cloned_posts.set(fetched_posts);
-            });
+                    cloned_posts.set(fetched_posts);
+                });
 
-            || {}
-        });
+                || {}
+            },
+        );
     }
 
     let on_create_post = {
         // Redirect to create post page
 
         Callback::from(move |_| {
+            log!("on_create_post is rendered");
             navigator.push::<Router>(&Router::CreatePost);
         })
     };
@@ -175,6 +178,8 @@ pub fn posts() -> Html {
         let cloned_categories = categories.clone();
         let cloned_category_form_visible = category_form_visible.clone();
         Callback::from(move |(new_id, name)| {
+            log!("on_create_category is rendered");
+
             cloned_category_form_visible.set(!*cloned_category_form_visible);
 
             let mut old_categories = (*cloned_categories).clone();
@@ -189,16 +194,20 @@ pub fn posts() -> Html {
 
     let on_next_page = {
         let cloned_current_page = current_page.clone();
-        
+
         Callback::from(move |_| {
+            log!("on_next_page is rendered");
+
             cloned_current_page.set(*cloned_current_page + 1);
         })
     };
-    
+
     let on_prev_page = {
         let cloned_current_page = current_page.clone();
 
         Callback::from(move |_| {
+            log!("on_prev_page is rendered");
+
             cloned_current_page.set(*cloned_current_page - 1);
         })
     };
