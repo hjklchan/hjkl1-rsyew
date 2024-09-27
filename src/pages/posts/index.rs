@@ -289,9 +289,12 @@ pub fn posts() -> Html {
                         </tr>
                         if *post_row_form_visible {
                             <tr>
-                                <td colspan="5" class="px-1 py-2">
+                                <td class="px-1 py-2">
                                     <RowForm on_close={on_quick_create_close} />
                                 </td>
+                                <td class="hidden lg:table-cell w-28"></td>
+                                <td class="hidden lg:table-cell w-24"></td>
+                                <td class="hidden lg:table-cell w-28"></td>
                             </tr>
                         }
                     </tbody>

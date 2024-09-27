@@ -142,12 +142,12 @@ pub fn row_form(props: &RowFormProps) -> Html {
     }
 
     html! {
-        <div class="flex space-x-2 text-xs">
-            <div class="inline-block space-x-1">
+        <div class="text-xs space-y-1">
+            <div class="space-x-1">
                 <label>{"Title"}</label>
                 <input onchange={on_title_change} class="border px-1" />
             </div>
-            <div class="flex inline-block items-center space-x-1">
+            <div class="flex items-center space-x-1">
                 <label>{"Category"}</label>
                 <select onchange={on_category_change} class="border">
                     {
@@ -164,7 +164,7 @@ pub fn row_form(props: &RowFormProps) -> Html {
                     }
                 </select>
             </div>
-            <div class="flex items-center inline-block space-x-2">
+            <div class="flex items-center space-x-2">
                 <button
                     onclick={on_ok_click}
                     class="text-[#369]"
