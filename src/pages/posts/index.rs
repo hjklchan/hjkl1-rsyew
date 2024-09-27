@@ -4,6 +4,8 @@ use crate::components::category2::{
     Category,
     Category2,
 };
+use super::RowForm;
+
 use crate::components::icons::{Chat1, Eye1};
 use crate::router::Router;
 use gloo::console::log;
@@ -13,7 +15,6 @@ use yew::{
     function_component, html, use_effect_with, use_state, Callback, Html, Suspense,
     UseStateHandle,
 };
-use yew_router::hooks::use_navigator;
 use yew_router::prelude::Link;
 
 #[derive(Debug, Deserialize)]
@@ -65,13 +66,13 @@ struct Pagination {
 pub fn posts() -> Html {
     let posts_url = "http://127.0.0.1:9000/posts";
     
-    let navigator = use_navigator().unwrap();
     let categories: UseStateHandle<Vec<Category>> = use_state(Vec::new);
     let posts: UseStateHandle<Vec<Post>> = use_state(Vec::new);
     let pagination: UseStateHandle<Pagination> = use_state(Default::default);
     let current_page: UseStateHandle<u32> = use_state(|| 1);
     let current_category: UseStateHandle<Option<u64>> = use_state(|| None);
     let category_form_visible: UseStateHandle<bool> = use_state(|| false);
+    let post_row_form_visible: UseStateHandle<bool> = use_state(|| false);
 
     // Fetch categories
     // - onload
@@ -171,13 +172,18 @@ pub fn posts() -> Html {
         );
     }
 
-    let on_create_post = {
-        // Redirect to create post page
+    let on_quick_create = {
+        let cloned_post_row_form_visible = post_row_form_visible.clone();
 
         Callback::from(move |_| {
-            log!("on_create_post is rendered");
-            navigator.push::<Router>(&Router::CreatePost);
+            cloned_post_row_form_visible.set(true);
         })
+    };
+
+    let on_quick_create_close = {
+        let clone_post_row_form_visible = post_row_form_visible.clone();
+        // Close the row form
+        Callback::from(move |_| clone_post_row_form_visible.set(false))
     };
 
     let on_create_category = {
@@ -245,10 +251,10 @@ pub fn posts() -> Html {
                             >
                                 <div class="inline-block">
                                     <button
-                                        onclick={on_create_post}
-                                        class="text-[#333] hover:text-[#369]"
+                                        onclick={on_quick_create}
+                                        class="text-[#333] hover:text-[#369] border-b border-[#333]"
                                     >
-                                        {"Create Post"}
+                                        {"Quick Create"}
                                     </button>
                                 </div>
                                 <div class="inline-block space-x-1">
@@ -259,13 +265,6 @@ pub fn posts() -> Html {
                                         // onChange={onNewTab}
                                     />
                                     <label>{"New Tab"}{"(Ctrl + Click)"}</label>
-                                </div>
-                                <div class="inline-block space-x-1">
-                                    <input
-                                        type="checkbox"
-                                        // onChange={onShowTop}
-                                    />
-                                    <label>{"Show Top"}</label>
                                 </div>
                                 <button class="text-[#369]">
                                     {"All"}
@@ -288,6 +287,13 @@ pub fn posts() -> Html {
                             </td>
                             <td class="hidden lg:table-cell w-28">{"Last Updated"}</td>
                         </tr>
+                        if *post_row_form_visible {
+                            <tr>
+                                <td colspan="5" class="px-1 py-2">
+                                    <RowForm on_close={on_quick_create_close} />
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
                 // Posts - List
