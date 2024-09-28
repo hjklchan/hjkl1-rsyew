@@ -287,18 +287,13 @@ pub fn posts() -> Html {
                             </td>
                             <td class="hidden lg:table-cell w-28">{"Last Updated"}</td>
                         </tr>
-                        if *post_row_form_visible {
-                            <tr>
-                                <td class="px-1 py-2">
-                                    <RowForm on_close={on_quick_create_close} />
-                                </td>
-                                <td class="hidden lg:table-cell w-28"></td>
-                                <td class="hidden lg:table-cell w-24"></td>
-                                <td class="hidden lg:table-cell w-28"></td>
-                            </tr>
-                        }
                     </tbody>
                 </table>
+                <div class="w-full ">
+                    if *post_row_form_visible {
+                        <RowForm on_close={on_quick_create_close} />
+                    }
+                </div>
                 // Posts - List
                 <table
                     class="table-fixed w-full text-sm text-[#334]"
@@ -334,6 +329,12 @@ pub fn posts() -> Html {
                                                 // {...newTabProps}
                                             >
                                                 {&post.title}
+                                            </Link<Router>>
+                                            <Link<Router>
+                                                to={Router::EditPost { id: post.id }}
+                                                classes="text-sm color-blue-500 ml-1"
+                                            >
+                                                {"[Edit]"}
                                             </Link<Router>>
                                         </td>
                                         <td class="hidden lg:table-cell w-28">
