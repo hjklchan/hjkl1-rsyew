@@ -142,7 +142,7 @@ pub fn row_form(props: &RowFormProps) -> Html {
     }
 
     html! {
-        <div class="text-xs space-y-1">
+        <div class="flex text-xs space-x-2 py-2 pl-2">
             <div class="space-x-1">
                 <label>{"Title"}</label>
                 <input onchange={on_title_change} class="border px-1" />
