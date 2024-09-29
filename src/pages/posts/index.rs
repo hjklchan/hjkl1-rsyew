@@ -21,26 +21,31 @@ use yew_router::prelude::Link;
 pub struct CategoryItem {
     pub id: u64,
     pub name: String,
+    #[allow(unused)]
     pub description: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct ListReply<T> {
     pub data: Vec<T>,
+    #[allow(unused)]
     pub message: String,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct PaginationData<T> {
     pub items: Vec<T>,
+    #[allow(unused)]
     pub page_size: u64,
     pub has_prev: bool,
     pub has_next: bool,
+    #[allow(unused)]
     pub total: u64,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct PaginationReply<T> {
+    #[allow(unused)]
     pub message: String,
     pub data: PaginationData<T>,
 }

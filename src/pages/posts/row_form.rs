@@ -5,6 +5,7 @@ use yew::prelude::*;
 
 #[derive(Debug, Deserialize)]
 pub struct NormalReply<T> {
+    #[allow(unused)]
     pub message: String,
     pub data: T,
 }
@@ -26,6 +27,7 @@ pub struct CreatePostReplyData {
 pub struct Category {
     pub id: u64,
     pub name: String,
+    #[allow(unused)]
     pub description: Option<String>,
 }
 

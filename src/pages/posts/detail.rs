@@ -9,6 +9,7 @@ use yew_router::components::Link;
 
 #[derive(Debug, Deserialize)]
 pub struct NormalReply<T> {
+    #[allow(unused)]
     pub message: String,
     data: T,
 }

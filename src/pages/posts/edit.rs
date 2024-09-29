@@ -3,7 +3,9 @@ use yew::prelude::*;
 
 #[derive(Debug, Deserialize)]
 pub struct NormalReply<T> {
+    #[allow(unused)]
     pub message: String,
+    #[allow(unused)]
     data: T,
 }
 

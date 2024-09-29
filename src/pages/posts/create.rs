@@ -1,12 +1,11 @@
-use gloo::console::log;
 use gloo_net::http::Request;
-use html::IntoPropValue;
 use serde::{Deserialize, Serialize};
 use web_sys::{wasm_bindgen::JsCast, HtmlInputElement};
 use yew::prelude::*;
 
 #[derive(Debug, Deserialize)]
 pub struct NormalReply<T> {
+    #[allow(unused)]
     pub message: String,
     pub data: T,
 }
@@ -23,6 +22,7 @@ pub struct CreatePostPayload {
 pub struct Category {
     pub id: u64,
     pub name: String,
+    #[allow(unused)]
     pub description: Option<String>,
 }
 
