@@ -1,10 +1,8 @@
 use super::jsondata as post_jsondata;
-use crate::components::category2::{
-    jsondata as category_jsondata,
-    Category,
-    Category2,
-};
 use super::RowForm;
+use crate::api::OhMyResponse;
+use crate::api::PaginationData;
+use crate::components::category2::{jsondata as category_jsondata, Category, Category2};
 
 use crate::components::icons::{Chat1, Eye1};
 use crate::router::Router;
@@ -12,8 +10,7 @@ use gloo::console::log;
 use gloo_net::http::Request;
 use serde::Deserialize;
 use yew::{
-    function_component, html, use_effect_with, use_state, Callback, Html, Suspense,
-    UseStateHandle,
+    function_component, html, use_effect_with, use_state, Callback, Html, Suspense, UseStateHandle,
 };
 use yew_router::prelude::Link;
 
@@ -23,31 +20,6 @@ pub struct CategoryItem {
     pub name: String,
     #[allow(unused)]
     pub description: Option<String>,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct ListReply<T> {
-    pub data: Vec<T>,
-    #[allow(unused)]
-    pub message: String,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct PaginationData<T> {
-    pub items: Vec<T>,
-    #[allow(unused)]
-    pub page_size: u64,
-    pub has_prev: bool,
-    pub has_next: bool,
-    #[allow(unused)]
-    pub total: u64,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct PaginationReply<T> {
-    #[allow(unused)]
-    pub message: String,
-    pub data: PaginationData<T>,
 }
 
 #[derive(Debug, Deserialize, Clone, PartialEq)]
@@ -70,7 +42,7 @@ struct Pagination {
 #[function_component(Posts)]
 pub fn posts() -> Html {
     let posts_url = "http://127.0.0.1:9000/posts";
-    
+
     let categories: UseStateHandle<Vec<Category>> = use_state(Vec::new);
     let posts: UseStateHandle<Vec<Post>> = use_state(Vec::new);
     let pagination: UseStateHandle<Pagination> = use_state(Default::default);
@@ -100,7 +72,7 @@ pub fn posts() -> Html {
                     .unwrap()
                     .json()
                     .await
-                    .map(|reply: ListReply<CategoryItem>| {
+                    .map(|reply: OhMyResponse<Vec<CategoryItem>>| {
                         reply
                             .data
                             .iter()
@@ -155,7 +127,7 @@ pub fn posts() -> Html {
                         .unwrap()
                         .json()
                         .await
-                        .map(|reply: PaginationReply<Post>| {
+                        .map(|reply: OhMyResponse<PaginationData<Post>>| {
                             // NOTE Pagination
                             let new_pagination = Pagination {
                                 has_next: reply.data.has_next,

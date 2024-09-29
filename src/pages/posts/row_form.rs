@@ -3,12 +3,7 @@ use serde::{Deserialize, Serialize};
 use web_sys::{wasm_bindgen::JsCast, HtmlInputElement};
 use yew::prelude::*;
 
-#[derive(Debug, Deserialize)]
-pub struct NormalReply<T> {
-    #[allow(unused)]
-    pub message: String,
-    pub data: T,
-}
+use crate::api::OhMyResponse;
 
 #[derive(Debug, Serialize)]
 pub struct CreatePostPayload {
@@ -113,7 +108,7 @@ pub fn row_form(props: &RowFormProps) -> Html {
                     .unwrap()
                     .json()
                     .await
-                    .map(|reply: NormalReply<CreatePostReplyData>| reply.data.new_id)
+                    .map(|reply: OhMyResponse<CreatePostReplyData>| reply.data.new_id)
                     .unwrap();
 
                 cloned_on_created.emit(new_id);
@@ -135,7 +130,7 @@ pub fn row_form(props: &RowFormProps) -> Html {
                     .unwrap()
                     .json()
                     .await
-                    .map(|reply: NormalReply<Vec<Category>>| reply.data)
+                    .map(|reply: OhMyResponse<Vec<Category>>| reply.data)
                     .unwrap();
 
                 cloned_category_options.set(categories);

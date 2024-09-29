@@ -1,4 +1,4 @@
-use crate::app_ctx::AppContext;
+use crate::{api::OhMyResponse, app_ctx::AppContext};
 use crate::router::Router;
 use gloo_net::http::Request;
 use pulldown_cmark::{Options, Parser};
@@ -6,13 +6,6 @@ use serde::Deserialize;
 use web_sys::Node;
 use yew::prelude::*;
 use yew_router::components::Link;
-
-#[derive(Debug, Deserialize)]
-pub struct NormalReply<T> {
-    #[allow(unused)]
-    pub message: String,
-    data: T,
-}
 
 #[derive(Debug, Deserialize, Default)]
 pub struct Post {
@@ -57,7 +50,7 @@ pub fn post_detail(props: &PostDetailProps) -> Html {
                     .unwrap()
                     .json()
                     .await
-                    .map(|reply: NormalReply<Post>| reply.data)
+                    .map(|reply: OhMyResponse<Post>| reply.data)
                     .unwrap();
 
                 // Change the document title

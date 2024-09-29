@@ -1,14 +1,6 @@
 use serde::Deserialize;
 use yew::prelude::*;
 
-#[derive(Debug, Deserialize)]
-pub struct NormalReply<T> {
-    #[allow(unused)]
-    pub message: String,
-    #[allow(unused)]
-    data: T,
-}
-
 #[derive(Debug, Deserialize, Default, PartialEq)]
 pub struct PostDetail {
     id: u64,
@@ -29,9 +21,11 @@ pub struct EditPostProps {
 #[function_component(EditPost)]
 pub fn edit_post(props: &EditPostProps) -> Html {
     let old_post_detail: UseStateHandle<PostDetail> = use_state_eq(Default::default);
+    #[allow(unused)]
     let title_field: UseStateHandle<String> = use_state(Default::default);
     let body_field = use_state(String::new);
 
+    #[allow(unused)]
     let on_editor_input = {
         let cloned_body_field = body_field.clone();
 

@@ -3,12 +3,7 @@ use serde::{Deserialize, Serialize};
 use web_sys::{wasm_bindgen::JsCast, HtmlInputElement};
 use yew::prelude::*;
 
-#[derive(Debug, Deserialize)]
-pub struct NormalReply<T> {
-    #[allow(unused)]
-    pub message: String,
-    pub data: T,
-}
+use crate::api::OhMyResponse;
 
 #[derive(Debug, Serialize)]
 pub struct CreatePostPayload {
@@ -133,7 +128,7 @@ pub fn post_form() -> Html {
                     .unwrap()
                     .json()
                     .await
-                    .map(|reply: NormalReply<Vec<Category>>| reply.data)
+                    .map(|reply: OhMyResponse<Vec<Category>>| reply.data)
                     .unwrap();
 
                 cloned_category_options.set(categories);
@@ -155,7 +150,7 @@ pub fn post_form() -> Html {
                             </div>
                         </div>
                     </div>
-                    
+
                 <div class="sm:col-span-3">
                 <label for="country" class="block text-sm font-medium leading-6 text-gray-900">{"Country"}</label>
                 <div class="mt-2">
