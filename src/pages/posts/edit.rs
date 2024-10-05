@@ -20,27 +20,13 @@ pub struct EditPostProps {
 
 #[function_component(EditPost)]
 pub fn edit_post(props: &EditPostProps) -> Html {
-    let old_post_detail: UseStateHandle<PostDetail> = use_state_eq(Default::default);
-    #[allow(unused)]
-    let title_field: UseStateHandle<String> = use_state(Default::default);
-    let body_field = use_state(String::new);
-
-    #[allow(unused)]
-    let on_editor_input = {
-        let cloned_body_field = body_field.clone();
-
-        Callback::from(move |value| {
-            cloned_body_field.set(value);
-        })
-    };
-
     html! {
         <div class="space-y-1">
             <div>
                 <label for="title">{"Title"}</label>
                 <input
                     // onchange={on_title_change}
-                    value={(*old_post_detail).title.clone()}
+                    // value={(*old_post_detail).title.clone()}
                     id="title"
                     class="w-full border p-1"
                 />
